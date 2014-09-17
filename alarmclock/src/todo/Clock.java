@@ -52,14 +52,12 @@ public class Clock {
         mutSem.take();
         time++;
         if (time % 100 > 59) {
-            time += 100;
-            time -= 60;
+            time += 40;
         }
         int sec = time % 10000;
         sec = sec / 100;
         if (sec > 59) {
-            time += 10000;
-            time -= 6000;
+            time += 4000;
         }
         int hour = time / 10000;
         if (hour > 23) {
