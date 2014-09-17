@@ -3,7 +3,7 @@ import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
 
-import todo.AlarmClock;
+import todo.*;
 
 
 public class ClockGUI extends Applet implements KeyListener, ClockTimeDisplay, ItemListener {
