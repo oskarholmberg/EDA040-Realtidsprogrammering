@@ -1,0 +1,85 @@
+package lift;
+
+public class Monitor {
+
+	private int here, next;
+	private int[] waitEntry;
+	private int[] waitExit;
+	private int load;
+	private LiftView lv;
+	private boolean moveUp;
+
+	public Monitor(LiftView lv) {
+		moveUp = true;
+		here = 0;
+		next = 0;
+		waitEntry = new int[7];
+		waitExit = new int[7];
+		load = 0;
+		this.lv = lv;
+
+	}
+
+	synchronized public void enterFloor(int floor) {
+		waitEntry[floor]++;
+		System.out.println(waitEntry);
+		lv.drawLevel(floor, waitEntry[floor]);
+	}
+
+	synchronized public boolean canEnter(int floor) {
+		return load < 4 && next == here && floor == here;
+	}
+
+	synchronized public void enterLift(int nextFloor) {
+		waitEntry[here]--;
+		waitExit[nextFloor]++;
+		lv.drawLevel(here, waitEntry[here]);
+		load++;
+		lv.drawLift(here, load);
+		notifyAll();
+	}
+
+	synchronized public void exitLift() {
+		waitExit[here]--;
+		load--;
+		lv.drawLift(here, load);
+		notifyAll();
+	}
+
+	synchronized public void moveLift() {
+		nextLevel();
+		lv.moveLift(here, next);
+	}
+
+	synchronized public void haltLift() {
+		here = next;
+		notifyAll();
+	}
+
+	synchronized private void nextLevel() {
+		if (moveUp) {
+			next++;
+			if (next == 6) {
+				moveUp = false;
+			}
+		} else {
+			next--;
+			if (next == 0) {
+				moveUp = true;
+			}
+		}
+	}
+
+	synchronized public int getCurrentFloor() {
+		return here;
+	}
+
+	synchronized public void waitABit() {
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
