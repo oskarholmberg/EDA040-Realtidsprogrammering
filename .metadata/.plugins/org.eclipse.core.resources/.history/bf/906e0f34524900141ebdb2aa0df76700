@@ -26,17 +26,22 @@ public class Monitor {
 	}
 
 	synchronized public boolean canEnter(int floor) {
-		return load < 4 && next == here && floor == here
-				&& waitEntry[floor] > 0;
+		return load < 4 && next == here && floor == here;
 	}
 
-	synchronized public void enterLift(int nextFloor) {
-		waitEntry[here]--;
+	synchronized public boolean enterLift(int nextFloor) {
+		if (load < 4) {
+			waitEntry[here]--;
+		
+		System.out.println(waitEntry[here]);
 		waitExit[nextFloor]++;
 		lv.drawLevel(here, waitEntry[here]);
 		load++;
 		lv.drawLift(here, load);
 		notifyAll();
+		return true;
+		}
+		return false;
 	}
 
 	synchronized public void exitLift() {
