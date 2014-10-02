@@ -1,0 +1,25 @@
+package lift;
+
+public class Person extends Thread {
+	private int currentFloor;
+	private int nextFloor;
+	private Monitor monitor;
+
+	public Person(Monitor monitor){
+		super();
+		this.monitor = monitor;
+		currentFloor = (int)Math.random()*7;
+		nextFloor = nextFloor();
+		monitor.enteredFloor(currentFloor);
+	}
+	
+	
+	
+	private int nextFloor(){
+		int n = (int)Math.random()*7;
+		while(n==currentFloor){
+			n = (int)Math.random()*7;
+		}
+		return n;
+	}
+}
