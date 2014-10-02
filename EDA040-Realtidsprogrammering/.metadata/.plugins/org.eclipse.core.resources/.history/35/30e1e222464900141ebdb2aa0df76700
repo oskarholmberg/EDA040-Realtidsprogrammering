@@ -1,6 +1,0 @@
-package lift;
-
-public class Lift extends Thread{
-	
-
-}

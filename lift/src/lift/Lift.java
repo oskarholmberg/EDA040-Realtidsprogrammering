@@ -15,7 +15,7 @@ public class Lift extends Thread {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			m.moveLift();
+			m.moveLift();		//Locks the lift and moves it
 		}
 	}
 

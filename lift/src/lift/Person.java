@@ -10,7 +10,7 @@ public class Person extends Thread {
 		currentFloor = (int) (Math.random() * 7);
 		targetFloor = nextFloor();
 	}
-
+																	//Starts a new thread which makes a person wait for the lift, rides it and then generate a new target floor
 	public void run() {
 		monitor.enterFloor(currentFloor);
 		while (true) {
@@ -26,6 +26,7 @@ public class Person extends Thread {
 		}
 	}
 
+																//Generate a new target floor that is not equal to the current floor
 	private int nextFloor() {
 		int n = (int) (Math.random() * 7);
 		while (n == currentFloor) {
