@@ -3,19 +3,43 @@ package lift;
 public class Lift extends Thread {
 
 	private Monitor m;
+	private boolean moveUp;
+	private int next;
+	private LiftView lv;
 
-	public Lift(Monitor monitor) {
+	public Lift(Monitor monitor, LiftView lv) {
 		m = monitor;
+		moveUp = true;
+		next = 0;
+		this.lv = lv;
 	}
 
+	/*
+	 * Runs the elevator.
+	 */
 	public void run() {
 		while (true) {
-			try {
-				sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			int temp = next;
+			nextLevel();
+			m.moveLift(next);
+			lv.moveLift(temp, next);
+		}
+	}
+
+	/**
+	 * Generates the next target floor for the elevator.
+	 */
+	private void nextLevel() {
+		if (moveUp) {
+			next++;
+			if (next == 6) {
+				moveUp = false;
 			}
-			m.moveLift();		//Locks the lift and moves it
+		} else {
+			next--;
+			if (next == 0) {
+				moveUp = true;
+			}
 		}
 	}
 

@@ -1,5 +1,9 @@
 package lift;
 
+/**
+ * @author dat12nka
+ * 
+ */
 public class Monitor {
 
 	private int here, next;
@@ -7,10 +11,12 @@ public class Monitor {
 	private int[] waitExit;
 	private int load;
 	private LiftView lv;
-	private boolean moveUp;
 
+	/**
+	 * @param lv
+	 *            , LiftView
+	 */
 	public Monitor(LiftView lv) {
-		moveUp = true;
 		here = 0;
 		next = 0;
 		waitEntry = new int[7];
@@ -20,25 +26,40 @@ public class Monitor {
 
 	}
 
-
-																				//floor = the floor that the person is at
-	//																			//Tells the monitor that there is one more person at floor "floor"
-	synchronized public void enterFloor(int floor) {	
+	/**
+	 * Notifies the monitor that a person has entered the floor determined by
+	 * floor.
+	 * 
+	 * @param floor
+	 *            , the current floor of the person.
+	 */
+	private void enterFloor(int floor) {
 		waitEntry[floor]++;
 		lv.drawLevel(floor, waitEntry[floor]);
 	}
-																	
-																				//floor = the floor that the person wants to enter the lift at
-	//																			//Checks if the person can enter the lift at floor "floor"
-	synchronized private boolean canEnter(int floor) {	
+
+	/**
+	 * Determines whether a person may enter the elevator or not.
+	 * 
+	 * @param floor
+	 * @return true if a person may enter the elevator. False if not.
+	 */
+	private boolean canEnter(int floor) {
 		return load < 4 && next == here && floor == here;
 	}
 
-	
-																				//nextFloor = the floor that the person wants to go to
-																				//currentFloor = the floor that the person is at
-																				//Makes a person wait for the lift and then enter the lift when possible and finally leaves the lift when at the target floor
-	synchronized public void liftAction(int nextFloor, int currentFloor) {	
+	/**
+	 * Handles a persons actions from the point of arriving at a floor until
+	 * exiting the elevator.
+	 * 
+	 * @param nextFloor
+	 *            , the target floor of the person.
+	 * @param currentFloor
+	 *            , the current floor of the person.
+	 */
+
+	synchronized public void liftAction(int nextFloor, int currentFloor) {
+		enterFloor(currentFloor);
 		while (!canEnter(currentFloor)) {
 			try {
 				wait();
@@ -51,6 +72,7 @@ public class Monitor {
 		waitExit[nextFloor]++;
 		lv.drawLevel(here, waitEntry[here]);
 		lv.drawLift(here, load);
+		notifyAll();
 		while (here != nextFloor) {
 			try {
 				wait();
@@ -60,49 +82,34 @@ public class Monitor {
 		}
 		exitLift();
 	}
-																		//A person leaves the floor
-	synchronized private void exitLift() {	
+
+	/**
+	 * Removes a person from the elevator.
+	 */
+	private void exitLift() {
 		waitExit[here]--;
 		load--;
 		lv.drawLift(here, load);
 		notifyAll();
 	}
-																		//Gets the next floor to go to and starts riding there
-	synchronized public void moveLift() {	
-		nextLevel();
-		lv.moveLift(here, next);
-		haltLift();
-	}
-																		//The lift has arrived at the next floor
-	synchronized private void haltLift() {
-		here = next;
+
+	/**
+	 * Moves the elevator to the floor given in next.
+	 * 
+	 * @param next
+	 *            , the upcoming floor of the elevator.
+	 */
+	synchronized public void moveLift(int next) {
+		here = this.next;
+		notifyAll();
+		while (waitExit[here] > 0 || (waitEntry[here] > 0 && load < 4)) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		this.next = next;
 		notifyAll();
 	}
-																		//Sets the variable next to the next floor, it's either +1 or -1 depending on the current direction of the lift
-	synchronized private void nextLevel() {
-		if (moveUp) {
-			next++;
-			if (next == 6) {
-				moveUp = false;
-			}
-		} else {
-			next--;
-			if (next == 0) {
-				moveUp = true;
-			}
-		}
-	}
-																	//Returns the current floor of the lift
-	synchronized public int getCurrentFloor() {
-		return here;
-	}
-																	//I don't think we're using this
-	synchronized public void waitABit() {
-		try {
-			wait();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
 }

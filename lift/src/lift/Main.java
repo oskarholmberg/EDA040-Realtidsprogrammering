@@ -5,12 +5,12 @@ public class Main {
 	public static void main(String[] args) {
 		LiftView lv = new LiftView();
 		Monitor monitor = new Monitor(lv);
-		Lift l = new Lift(monitor);
-		l.start();
+		Lift l = new Lift(monitor, lv);
 		for (int i = 0; i < 20; i++) {
 			Person p = new Person(monitor);
 			p.start();
 		}
+		l.start();
 
 	}
 }

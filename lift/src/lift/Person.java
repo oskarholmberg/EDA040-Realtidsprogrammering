@@ -7,12 +7,16 @@ public class Person extends Thread {
 
 	public Person(Monitor monitor) {
 		this.monitor = monitor;
-		currentFloor = (int) (Math.random() * 7);
+		currentFloor = (int) (Math.random() * 7); // Randomizes a floor for
+													// initial spawn.
 		targetFloor = nextFloor();
 	}
-																	//Starts a new thread which makes a person wait for the lift, rides it and then generate a new target floor
+
+	/*
+	 * Enables the person to take the elevator, and regenerates the person after
+	 * a random amount of time (0-45s) after he/she has exited.
+	 */
 	public void run() {
-		monitor.enterFloor(currentFloor);
 		while (true) {
 			monitor.liftAction(targetFloor, currentFloor);
 			try {
@@ -22,11 +26,14 @@ public class Person extends Thread {
 			}
 			currentFloor = targetFloor;
 			targetFloor = nextFloor();
-			monitor.enterFloor(currentFloor);
 		}
 	}
 
-																//Generate a new target floor that is not equal to the current floor
+	/**
+	 * Generates a new target floor for the person.
+	 * 
+	 * @return n, the next target floor.
+	 */
 	private int nextFloor() {
 		int n = (int) (Math.random() * 7);
 		while (n == currentFloor) {

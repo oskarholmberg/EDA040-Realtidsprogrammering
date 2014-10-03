@@ -1,0 +1,83 @@
+package lift;
+
+public class Monitor {
+
+	private int here, next;
+	private int[] waitEntry;
+	private int[] waitExit;
+	private int load;
+	private LiftView lv;
+
+	public Monitor(LiftView lv) {
+		here = 0;
+		next = 0;
+		waitEntry = new int[7];
+		waitExit = new int[7];
+		load = 0;
+		this.lv = lv;
+
+	}
+
+	// floor = the floor that the person is at
+	// //Tells the monitor that there is one more person at floor "floor"
+	private void enterFloor(int floor) {
+		waitEntry[floor]++;
+		lv.drawLevel(floor, waitEntry[floor]);
+	}
+
+	// floor = the floor that the person wants to enter the lift at
+	// //Checks if the person can enter the lift at floor "floor"
+	private boolean canEnter(int floor) {
+		return load < 4 && next == here && floor == here;
+	}
+
+	// nextFloor = the floor that the person wants to go to
+	// currentFloor = the floor that the person is at
+	// Makes a person wait for the lift and then enter the lift when possible
+	// and finally leaves the lift when at the target floor
+	synchronized public void liftAction(int nextFloor, int currentFloor) {
+		enterFloor(currentFloor);
+		while (!canEnter(currentFloor)) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		load++;
+		waitEntry[here]--;
+		waitExit[nextFloor]++;
+		lv.drawLevel(here, waitEntry[here]);
+		lv.drawLift(here, load);
+		while (here != nextFloor) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		exitLift();
+	}
+
+	// A person leaves the floor
+	private void exitLift() {
+		waitExit[here]--;
+		load--;
+		lv.drawLift(here, load);
+		notifyAll();
+	}
+
+	// Gets the next floor to go to and starts riding there
+	synchronized public void moveLift(int next) {
+		here = this.next;
+		while (waitExit[here] > 0 && waitEntry[here] > 0 && load < 4) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		this.here = here;
+		this.next = next;
+	}
+}
