@@ -72,6 +72,7 @@ public abstract class AbstractWashingMachine {
    */
 
   public abstract void setSpin(int direction);
+
   
   /**
    * Activate the washing machine. Called early during initialization 
