@@ -1,0 +1,31 @@
+package todo;
+
+import done.*;
+
+public class WashingController implements ButtonListener {
+	private AbstractWashingMachine theMachine;
+	private double theSpeed;
+	private TemperatureController tc;
+	private WaterController wc;
+	private SpinController sc;
+	
+	
+	public WashingController(AbstractWashingMachine theMachine, double theSpeed) {
+		this.theMachine = theMachine;
+		this.theSpeed = theSpeed;
+		sc = new SpinController(theMachine, theSpeed);
+		wc = new WaterController(theMachine, theSpeed);
+		tc = new TemperatureController(theMachine, theSpeed);
+	}
+
+	public void processButton(int theButton) {
+		switch (theButton) {
+		case 1: WashingProgram w1 = new WashingProgram1(theMachine, )
+		case 2:
+		case 3:
+		default:
+			
+		}
+
+	}
+}

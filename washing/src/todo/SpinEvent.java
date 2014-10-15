@@ -11,8 +11,8 @@ package todo;
 import se.lth.cs.realtime.event.*;
 
 /**
- * This event is sent by washing program processes to the spin
- * controller process. It is an order to set a particular spin.
+ * This event is sent by washing program processes to the spin controller
+ * process. It is an order to set a particular spin.
  */
 public class SpinEvent extends RTEvent {
 	private static final long serialVersionUID = 1L;
@@ -20,11 +20,11 @@ public class SpinEvent extends RTEvent {
 	// ----------------------------------------------------------- CONSTRUCTOR
 
 	/**
-	 * @param   mode   Spin regulation mode (SPIN_OFF, SPIN_SLOW, SPIN_FAST)
+	 * @param mode
+	 *            Spin regulation mode (SPIN_OFF, SPIN_SLOW, SPIN_FAST)
 	 */
 	public SpinEvent(Object source, int mode) {
 		super(source);
-
 		myMode = mode;
 	}
 
@@ -40,7 +40,7 @@ public class SpinEvent extends RTEvent {
 	// ------------------------------------------------------ PUBLIC CONSTANTS
 
 	/** Turn off motor. */
-	public static final int SPIN_OFF  = 0;
+	public static final int SPIN_OFF = 0;
 
 	/** Slow spin, changing direction periodically. */
 	public static final int SPIN_SLOW = 1;
@@ -50,5 +50,5 @@ public class SpinEvent extends RTEvent {
 
 	// ---------------------------------------------------- PRIVATE ATTRIBUTES
 
-	private int myMode;       // Spin mode (SPIN_OFF, SPIN_SLOW, or SPIN_FAST)
+	private int myMode; // Spin mode (SPIN_OFF, SPIN_SLOW, or SPIN_FAST)
 }

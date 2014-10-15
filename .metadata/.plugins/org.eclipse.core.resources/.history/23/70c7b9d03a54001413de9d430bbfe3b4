@@ -1,0 +1,25 @@
+package todo;
+
+
+import se.lth.cs.realtime.*;
+import se.lth.cs.realtime.event.RTEvent;
+import done.AbstractWashingMachine;
+
+
+public class SpinController extends PeriodicThread {
+	private AbstractWashingMachine mach;
+	private double speed;
+
+	public SpinController(AbstractWashingMachine mach, double speed) {
+		super((long) (1000/speed)); // TODO: replace with suitable period
+		this.mach = mach;
+		this.speed = speed;
+	}
+
+	public void perform() {
+		RTEvent rte = mailbox.tryFetch();
+		if(!rte.equals(null)){
+			mach.setSpin(((SpinEvent)rte).getMode());
+		}
+	}
+}

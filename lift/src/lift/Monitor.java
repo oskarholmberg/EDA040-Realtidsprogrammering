@@ -19,8 +19,8 @@ public class Monitor {
 	public Monitor(LiftView lv) {
 		here = 0;
 		next = 0;
-		waitEntry = new int[7];
-		waitExit = new int[7];
+		waitEntry = new int[6];
+		waitExit = new int[6];
 		load = 0;
 		this.lv = lv;
 
