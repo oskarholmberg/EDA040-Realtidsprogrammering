@@ -8,6 +8,7 @@
 
 package todo;
 
+import se.lth.cs.realtime.event.RTEvent;
 import done.*;
 
 /**
@@ -48,7 +49,6 @@ class WashingProgram1 extends WashingProgram {
 	 * when the start() method is called.
 	 */
 	protected void wash() throws InterruptedException {
-
 		myMachine.setLock(true);
 		myWaterController.putEvent(new WaterEvent(this, WaterEvent.WATER_FILL,
 				0.5));
@@ -60,7 +60,7 @@ class WashingProgram1 extends WashingProgram {
 				TemperatureEvent.TEMP_SET, 60));
 		mailbox.doFetch();
 		mySpinController.putEvent(new SpinEvent(this, SpinEvent.SPIN_SLOW));
-		sleep(10000);
+		sleep(20000);
 		mySpinController.putEvent(new SpinEvent(this, SpinEvent.SPIN_OFF));
 		myTempController.putEvent(new TemperatureEvent(this,
 				TemperatureEvent.TEMP_IDLE, 0.0));
@@ -72,7 +72,7 @@ class WashingProgram1 extends WashingProgram {
 					WaterEvent.WATER_FILL, 0.5));
 			mailbox.doFetch();
 			mySpinController.putEvent(new SpinEvent(this, SpinEvent.SPIN_SLOW));
-			sleep(1000);
+			sleep(5000);
 			mySpinController.putEvent(new SpinEvent(this, SpinEvent.SPIN_OFF));
 			myWaterController.putEvent(new WaterEvent(this,
 					WaterEvent.WATER_DRAIN, 0.0));

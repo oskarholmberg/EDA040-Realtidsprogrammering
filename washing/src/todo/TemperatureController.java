@@ -30,7 +30,7 @@ public class TemperatureController extends PeriodicThread {
 						.putEvent(new AckEvent(this));
 				mach.setHeating(false);
 			}
-		} else if (temp > 0) {
+		} else if (temp > 0 && mach.getTemperature() < temp - 2) {
 			while (mach.getTemperature() < temp) {
 				mach.setHeating(true);
 			}
