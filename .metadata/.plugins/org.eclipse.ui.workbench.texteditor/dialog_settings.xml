@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="287" key="DIALOG_WIDTH"/>
+		<item value="293" key="DIALOG_WIDTH"/>
 		<item value="190" key="DIALOG_Y_ORIGIN"/>
 		<item value="1169" key="DIALOG_X_ORIGIN"/>
-		<item value="417" key="DIALOG_HEIGHT"/>
+		<item value="419" key="DIALOG_HEIGHT"/>
 		<item value="1|Sans|9.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">

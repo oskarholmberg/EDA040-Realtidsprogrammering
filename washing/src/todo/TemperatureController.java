@@ -22,9 +22,14 @@ public class TemperatureController extends PeriodicThread {
 				mach.setHeating(false);
 				temp = 0;
 			} else {
-				while (mach.getTemperature() < te.getTemperature()) {
+				temp = te.getTemperature();
+				while (mach.getTemperature() < temp) {
 					mach.setHeating(true);
-					temp = te.getTemperature();
+					if (mailbox.tryFetch() != null) {
+						mach.setHeating(false);
+						temp = 0;
+						return;
+					}
 				}
 				((WashingProgram) (rte.getSource()))
 						.putEvent(new AckEvent(this));
@@ -33,6 +38,11 @@ public class TemperatureController extends PeriodicThread {
 		} else if (temp > 0 && mach.getTemperature() < temp - 2) {
 			while (mach.getTemperature() < temp) {
 				mach.setHeating(true);
+				if (mailbox.tryFetch() != null) {
+					mach.setHeating(false);
+					temp = 0;
+					return;
+				}
 			}
 			mach.setHeating(false);
 		}

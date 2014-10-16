@@ -1,0 +1,48 @@
+package todo;
+
+import se.lth.cs.realtime.*;
+import se.lth.cs.realtime.event.RTEvent;
+import done.AbstractWashingMachine;
+
+public class TemperatureController extends PeriodicThread {
+	private AbstractWashingMachine mach;
+	private double temp;
+	private boolean sendAck;
+
+	public TemperatureController(AbstractWashingMachine mach, double speed) {
+		super((long) (1000 / speed)); // TODO: replace with suitable period
+		this.mach = mach;
+		temp = 0;
+		sendAck = false;
+	}
+
+	public void perform() {
+		RTEvent rte = mailbox.tryFetch();
+		if (rte != null) {
+			TemperatureEvent te = (TemperatureEvent) rte;
+			if (te.getMode() == te.TEMP_IDLE) {
+				mach.setHeating(false);
+				temp = 0;
+				sendAck = false;
+			} else {
+				temp = te.getTemperature();
+				sendAck = true;
+				if (mach.getTemperature() < temp && mach.getWaterLevel() > 0) {
+					mach.setHeating(true);
+				}
+				((WashingProgram) (rte.getSource()))
+						.putEvent(new AckEvent(this));
+			}
+		} else if (temp > 0 && mach.getTemperature() < temp - 2) {
+			if (mach.getTemperature() < temp) {
+				mach.setHeating(true);
+			} else {
+				if (sendAck == true) {
+					sendAck = false;
+				}
+				mach.setHeating(false);
+			}
+
+		}
+	}
+}
