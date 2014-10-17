@@ -94,5 +94,6 @@ class WashingProgram2 extends WashingProgram {
 		sleep(10000);
 		mySpinController.putEvent(new SpinEvent(this, SpinEvent.SPIN_OFF));
 		myMachine.setLock(false);
+		this.interrupt();
 	}
 }

@@ -9,7 +9,6 @@ public class WashingController implements ButtonListener {
 	private WaterController wc;
 	private SpinController sc;
 	private WashingProgram wp;
-	private boolean isInterrupted;
 
 	public WashingController(AbstractWashingMachine theMachine, double theSpeed) {
 		this.theMachine = theMachine;
@@ -20,7 +19,6 @@ public class WashingController implements ButtonListener {
 		sc.start();
 		wc.start();
 		tc.start();
-		isInterrupted = false;
 	}
 
 	public void processButton(int theButton) {
@@ -44,8 +42,9 @@ public class WashingController implements ButtonListener {
 			}
 			break;
 		default:
-			wp.interrupt();
-			isInterrupted = true;
+			if (wp != null && wp.isAlive()) {
+				wp.interrupt();
+			}
 		}
 	}
 }

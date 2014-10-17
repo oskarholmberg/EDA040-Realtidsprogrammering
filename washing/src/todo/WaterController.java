@@ -6,44 +6,62 @@ import done.AbstractWashingMachine;
 
 public class WaterController extends PeriodicThread {
 	private AbstractWashingMachine mach;
+	private double waterLevel;
+	private boolean ack;
+	private boolean fill;
+	private WaterEvent we;
 
 	public WaterController(AbstractWashingMachine mach, double speed) {
 		super((long) (1000 / speed)); // TODO: replace with suitable period
 		this.mach = mach;
+		ack = false;
+		waterLevel = 0;
+		fill = false;
 	}
 
 	public void perform() {
 		RTEvent rte = mailbox.tryFetch();
 		if (rte != null) {
-			WaterEvent we = (WaterEvent) rte;
+			we = (WaterEvent) rte;
 			int mode = we.getMode();
 			if (mode == 0) {
 				mach.setDrain(false);
 				mach.setFill(false);
+				fill = false;
 			} else if (mode == 1) {
 				mach.setDrain(false);
-				while (mach.getWaterLevel() < we.getLevel()) {
+				ack = true;
+				fill = true;
+				waterLevel = we.getLevel();
+				if (mach.getWaterLevel() < we.getLevel()) {
 					mach.setFill(true);
-					if (mailbox.tryFetch() != null) {
-						mach.setFill(false);
-						return;
-					}
 				}
-				((WashingProgram) (rte.getSource()))
-						.putEvent(new AckEvent(this));
-				mach.setFill(false);
 			} else {
+				fill = false;
 				mach.setFill(false);
 				mach.setDrain(true);
-				while (mach.getWaterLevel() > 0.0) {
-					if (mailbox.tryFetch() != null) {
-						mach.setFill(false);
-						return;
-					}
+				waterLevel = 0;
+				ack = true;
+			}
+		} else if (fill) {
+			if (mach.getWaterLevel() >= waterLevel) {
+				mach.setFill(false);
+				if (ack) {
+					ack = false;
+					((WashingProgram) (we.getSource())).putEvent(new AckEvent(
+							this));
 				}
-				((WashingProgram) (rte.getSource()))
-						.putEvent(new AckEvent(this));
+			}
+		} else if (!fill) {
+			if (mach.getWaterLevel() <= waterLevel) {
+				mach.setDrain(false);
+				if (ack) {
+					ack = false;
+					((WashingProgram) (we.getSource())).putEvent(new AckEvent(
+							this));
+				}
 			}
 		}
+
 	}
 }

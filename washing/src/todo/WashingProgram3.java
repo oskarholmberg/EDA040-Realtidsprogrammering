@@ -67,5 +67,6 @@ class WashingProgram3 extends WashingProgram {
 		// 0.0));
 		// Unlock
 		myMachine.setLock(false);
+		this.interrupt();
 	}
 }
